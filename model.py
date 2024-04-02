@@ -44,7 +44,9 @@ def recommend_songs(song_name, data=tracks):
 
         for song in data.sample(n=5)['track_name'].values:
             print(song)
-        return [song_name] + list(data.sample(n=10)['track_name'].iloc[0:11])
+        songs = data.sample(n=10)
+
+        return [song_name] + list(songs['track_name'].iloc[0:11] + ' by ' + songs['artists'].iloc[0:11])
 
     extracted_song_name = similar_strings[0][0]
     data['similarity_factor'] = get_similarities(extracted_song_name, data)
@@ -52,5 +54,5 @@ def recommend_songs(song_name, data=tracks):
     data.sort_values(by=['similarity_factor', 'popularity'],
                      ascending=[False, False],
                      inplace=True)
-    return list(data['track_name'].iloc[0:11])
+    return list(data['track_name'].iloc[0:11] + ' by ' + data['artists'].iloc[0:11])
 

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, after_this_request, send_file
 from model import recommend_songs
+from model_knn import recommend_songs_by_value
 from concurrent.futures import ThreadPoolExecutor
 from flask_cors import CORS
 from youtubesearchpython import VideosSearch
@@ -34,6 +35,20 @@ def download():
         os.remove(f'{videoId}.mp3')
         return response
     return send_file(f'{videoId}.mp3', as_attachment=True, download_name=f'{title}.mp3')
+
+@app.route('/recommend_by_values', methods = ['POST'])
+def recommend_by_value():
+    data = request.get_json()
+    for i in data:
+        data[i] = float(data[i])
+    selected_features = ['danceability', 'energy', 'loudness', 'speechiness',
+                     'acousticness', 'instrumentalness', 'liveness', 'valence']    
+    input_features = []
+    for i in selected_features:
+        input_features.append(data[i])
+    recommended_songs = recommend_songs_by_value(input_features)
+    print(recommended_songs)
+    return jsonify(recommended_songs)
 
 
 @app.route('/recommend', methods=['POST'])
@@ -98,4 +113,4 @@ def search(song: str):
     
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
