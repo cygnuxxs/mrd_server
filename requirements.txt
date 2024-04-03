@@ -1,8 +1,0 @@
-Flask==3.0.2
-Flask_Cors==4.0.0
-fuzzywuzzy==0.18.0
-numpy==1.26.4
-pandas==2.2.1
-scikit_learn==1.4.0
-youtube_search_python==1.6.6
-yt_dlp==2023.12.30
