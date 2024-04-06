@@ -56,3 +56,8 @@ def recommend_songs(song_name, data=tracks):
                      inplace=True)
     return list(data['track_name'].iloc[0:11] + ' by ' + data['artists'].iloc[0:11])
 
+
+def fetch_genre(genre_name):
+    genre_df = df[(df['track_genre'] == genre_name) & (df['popularity'] > 30)]
+    data = genre_df.sample(11)
+    return list(data['track_name'] + ' by ' + data['artists'])

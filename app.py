@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, after_this_request, send_file
-from model import recommend_songs
+from model import recommend_songs, fetch_genre
 from model_knn import recommend_songs_by_value
 from concurrent.futures import ThreadPoolExecutor
 from flask_cors import CORS
@@ -63,6 +63,21 @@ def recommend():
         return jsonify(recommendations)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/genre', methods = ["POST"])
+def genre_fetch():
+    response = request.get_json()
+    genre_df = fetch_genre(response)
+
+    data = []
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(search, song) for song in genre_df]
+        for future in futures:
+            result = future.result()
+            if result:
+                data.append(result)
+    return jsonify(data)
 
 @app.route('/search', methods=['POST'])
 def search_handler():
